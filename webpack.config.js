@@ -8,7 +8,7 @@ const DIST_DIR = path.resolve(__dirname, 'dist');
 const SRC_DIR = path.resolve(__dirname, 'src');
 
 module.exports = {
-    entry: SRC_DIR + '/components/app.js',
+    entry: SRC_DIR + '/index.js',
     output: {
         path: DIST_DIR,
         filename: 'bundle.js'
@@ -43,7 +43,7 @@ module.exports = {
             filename: 'main.css'
         }),
         new HtmlWebpackPlugin({
-            template: 'src/index.html'
+            template: SRC_DIR + '/index.html'
         }),
         new CleanWebpackPlugin(['dist'])
     ]
