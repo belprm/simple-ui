@@ -1,5 +1,6 @@
 import React from 'react';
 import UsersTable from '../components/UsersTable';
+import UserCreate from './UserCreate';
 import Api from '../tools/Api';
 
 export default class App extends React.Component {
@@ -10,21 +11,28 @@ export default class App extends React.Component {
             users: [],
             recordsTotal: 0,
             page: 0,
-            rowsPerPage: 10,
-            offset: 0
+            rowsPerPage: 5,
+            offset: 0,
+            userCreateDialogState: true
         };
 
         this.onChangePage = this.onChangePage.bind(this);
         this.onChangeRowsPerPage = this.onChangeRowsPerPage.bind(this);
+        this.toggleUserCreateDialog = this.toggleUserCreateDialog.bind(this);
+        this.getUsers = this.getUsers.bind(this);
+        this.createUser = this.createUser.bind(this);
     }
 
     getUsers() {
-        Api.users(`offset=${this.state.offset}&limit=${this.state.rowsPerPage}`).then(data => {
+        Api.listUsers(`offset=${this.state.offset}&limit=${this.state.rowsPerPage}`).then(data => {
             this.setState({
                 users: data.data,
                 recordsTotal: data.recordsTotal
             })
         });
+    }
+
+    createUser(data) {
     }
 
     componentDidMount() {
@@ -50,9 +58,21 @@ export default class App extends React.Component {
         }, this.getUsers);
     }
 
+    toggleUserCreateDialog() {
+        this.setState((prevState) => {
+            return {
+                userCreateDialogState: !prevState.userCreateDialogState
+            };
+        });
+    }
+
     render() {
         return (
-            <UsersTable {...this.state} onChangePage={this.onChangePage} onChangeRowsPerPage={this.onChangeRowsPerPage}/>
+            <div>
+                <UsersTable {...this.state} onChangePage={this.onChangePage}
+                            onChangeRowsPerPage={this.onChangeRowsPerPage}/>
+                <UserCreate {...this.state} onClick={this.toggleUserCreateDialog} handleSubmit={this.createUser}/>
+            </div>
         );
     }
 }
