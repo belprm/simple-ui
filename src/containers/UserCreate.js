@@ -66,8 +66,6 @@ class UserCreate extends React.Component {
             email: this.state.email.val
         };
 
-        console.log(user);
-
         Api.createUser(user).then(response => {
             console.log(response);
 
@@ -77,9 +75,10 @@ class UserCreate extends React.Component {
                         break;
 
                     case 409:
+                    case 500:
                         this.setState({
-                           show_snackbar: true,
-                           snackbar_text: response.message
+                            show_snackbar: true,
+                            snackbar_text: response.message
                         });
 
                         break;
@@ -88,18 +87,19 @@ class UserCreate extends React.Component {
                         const errors = response.extended_message.property_errors;
 
                         Object.keys(errors).map((key, index) => {
-                            this.setState({
-                                [key]: {error: true, val: this.state[key].val},
-                                show_snackbar: true,
-                                snackbar_text: errors[key][0]
-                            })
+                            this.setState((prevState) => {
+                                return {
+                                    [key]: {error: true, val: prevState[key].val},
+                                    show_snackbar: true,
+                                    snackbar_text: errors[key][0]
+                                };
+                            });
                         });
 
                         break;
-
-                    case 500:
-                        break;
                 }
+            } else {
+                this.props.onClick(true);
             }
         });
 
@@ -178,7 +178,7 @@ class UserCreate extends React.Component {
                             className={classes.close}
                             onClick={this.handleSnackbarClose}
                         >
-                            <CloseIcon />
+                            <CloseIcon/>
                         </IconButton>,
                     ]}
                     onClose={this.handleSnackbarClose}

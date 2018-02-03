@@ -1,4 +1,5 @@
 import React from 'react';
+import Button from 'material-ui/Button';
 import Table, {
     TableBody,
     TableCell,
@@ -22,6 +23,7 @@ const UsersTable = ({users, recordsTotal, page, rowsPerPage, onChangePage, onCha
                 <TableCell>Wallet Amount</TableCell>
                 <TableCell>Wallet Currency</TableCell>
                 <TableCell>Enabled</TableCell>
+                <TableCell>{''}</TableCell>
             </TableRow>
         </TableHead>
         <TableBody>
@@ -36,6 +38,9 @@ const UsersTable = ({users, recordsTotal, page, rowsPerPage, onChangePage, onCha
                     <TableCell>{String(user.wallet_amount)}</TableCell>
                     <TableCell>{String(user.wallet_currency)}</TableCell>
                     <TableCell>{String(user.enabled)}</TableCell>
+                    <TableCell>
+                        <Button raised onClick={console.dir}>Edit</Button>
+                    </TableCell>
                 </TableRow>
             ))}
         </TableBody>

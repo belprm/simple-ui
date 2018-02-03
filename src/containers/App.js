@@ -13,7 +13,7 @@ export default class App extends React.Component {
             page: 0,
             rowsPerPage: 5,
             offset: 0,
-            userCreateDialogState: true
+            userCreateDialogState: false
         };
 
         this.onChangePage = this.onChangePage.bind(this);
@@ -58,20 +58,31 @@ export default class App extends React.Component {
         }, this.getUsers);
     }
 
-    toggleUserCreateDialog() {
+    toggleUserCreateDialog(update = false) {
         this.setState((prevState) => {
             return {
                 userCreateDialogState: !prevState.userCreateDialogState
             };
+        }, () => {
+            if (update) {
+                this.getUsers();
+            }
         });
     }
 
     render() {
         return (
             <div>
-                <UsersTable {...this.state} onChangePage={this.onChangePage}
-                            onChangeRowsPerPage={this.onChangeRowsPerPage}/>
-                <UserCreate {...this.state} onClick={this.toggleUserCreateDialog} handleSubmit={this.createUser}/>
+                <UsersTable
+                    {...this.state}
+                    onChangePage={this.onChangePage}
+                    onChangeRowsPerPage={this.onChangeRowsPerPage}
+                />
+                <UserCreate
+                    {...this.state}
+                    onClick={this.toggleUserCreateDialog}
+                    handleSubmit={this.createUser}
+                />
             </div>
         );
     }
