@@ -1,5 +1,4 @@
 import React from 'react';
-import Button from 'material-ui/Button';
 import Table, {
     TableBody,
     TableCell,
@@ -9,8 +8,19 @@ import Table, {
     TableRow,
     TableSortLabel,
 } from 'material-ui/Table';
+import PopupMenu from '../containers/PopupMenu';
 
-const UsersTable = ({users, recordsTotal, page, rowsPerPage, onChangePage, onChangeRowsPerPage}) => (
+const UsersTable = ({
+                        users,
+                        recordsTotal,
+                        page,
+                        rowsPerPage,
+                        onChangePage,
+                        onChangeRowsPerPage,
+                        handleOpenEditUser,
+                        handleOpenUserTransactions,
+                        handleOpenBalanceDialog
+                    }) => (
     <Table>
         <TableHead>
             <TableRow>
@@ -39,7 +49,11 @@ const UsersTable = ({users, recordsTotal, page, rowsPerPage, onChangePage, onCha
                     <TableCell>{String(user.wallet_currency)}</TableCell>
                     <TableCell>{String(user.enabled)}</TableCell>
                     <TableCell>
-                        <Button raised onClick={console.dir}>Edit</Button>
+                        <PopupMenu
+                            handleEditUser={() => handleOpenEditUser(user.user_id)}
+                            handleOpenUserTransactions={() => handleOpenUserTransactions(user.user_id)}
+                            handleOpenBalanceDialog={()=>handleOpenBalanceDialog(user.user_id, user.balance)}
+                        />
                     </TableCell>
                 </TableRow>
             ))}

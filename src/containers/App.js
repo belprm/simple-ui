@@ -1,7 +1,10 @@
 import React from 'react';
 import UsersTable from '../components/UsersTable';
+import TransactionsTable from '../components/TransactionsTable';
 import UserCreate from './UserCreate';
+import UserUpdate from './UserUpdate';
 import Api from '../tools/Api';
+import UpdateBalance from './UpdateBalance';
 
 export default class App extends React.Component {
     constructor(props) {
@@ -13,14 +16,26 @@ export default class App extends React.Component {
             page: 0,
             rowsPerPage: 5,
             offset: 0,
-            userCreateDialogState: false
+            userCreateDialogState: false,
+            userUpdateDialogState: false,
+            userTransactionsDialogState: false,
+            userUpdateId: null,
+            userTransactions: [],
+            userUpdateBalanceState: false,
+            userBalanceId: null,
+            userBalance: null
         };
 
         this.onChangePage = this.onChangePage.bind(this);
         this.onChangeRowsPerPage = this.onChangeRowsPerPage.bind(this);
         this.toggleUserCreateDialog = this.toggleUserCreateDialog.bind(this);
         this.getUsers = this.getUsers.bind(this);
-        this.createUser = this.createUser.bind(this);
+        this.handleOpenEditUser = this.handleOpenEditUser.bind(this);
+        this.handleCloseEditUser = this.handleCloseEditUser.bind(this);
+        this.handleOpenUserTransactions = this.handleOpenUserTransactions.bind(this);
+        this.handleCloseUserTransactions = this.handleCloseUserTransactions.bind(this);
+        this.handleOpenBalanceDialog = this.handleOpenBalanceDialog.bind(this);
+        this.handleCloseBalanceDialog = this.handleCloseBalanceDialog.bind(this);
     }
 
     getUsers() {
@@ -32,14 +47,17 @@ export default class App extends React.Component {
         });
     }
 
-    createUser(data) {
+    getUserTransactions(user_id) {
+        Api.getUserTransactions(user_id).then(data => {
+            this.setState({
+                userTransactions: data
+            })
+        });
     }
 
     componentDidMount() {
         this.getUsers();
     }
-
-    // componentDidUpdate
 
     onChangePage(event, page) {
         this.setState((prevState) => {
@@ -70,6 +88,56 @@ export default class App extends React.Component {
         });
     }
 
+    handleOpenEditUser(user_id) {
+        this.setState({
+            userUpdateDialogState: true,
+            userUpdateId: user_id
+        })
+    }
+
+    handleCloseEditUser(update = false) {
+        this.setState({
+            userUpdateDialogState: false
+        }, () => {
+            if (update) {
+                this.getUsers();
+            }
+        });
+    }
+
+    handleOpenUserTransactions(user_id) {
+        this.setState({
+            userTransactionsDialogState: true
+        }, () => {
+            this.getUserTransactions(user_id);
+        });
+    }
+
+    handleCloseUserTransactions() {
+        this.setState({
+            userTransactionsDialogState: false,
+            userTransactions: []
+        })
+    }
+
+    handleOpenBalanceDialog(user_id, amount) {
+        this.setState({
+            userUpdateBalanceState: true,
+            userBalanceId: user_id,
+            userBalance: amount
+        })
+    }
+
+    handleCloseBalanceDialog(update = false) {
+        this.setState({
+            userUpdateBalanceState: false
+        }, () => {
+            if (update) {
+                this.getUsers();
+            }
+        });
+    }
+
     render() {
         return (
             <div>
@@ -77,12 +145,30 @@ export default class App extends React.Component {
                     {...this.state}
                     onChangePage={this.onChangePage}
                     onChangeRowsPerPage={this.onChangeRowsPerPage}
+                    handleOpenEditUser={this.handleOpenEditUser}
+                    handleOpenUserTransactions={this.handleOpenUserTransactions}
+                    handleOpenBalanceDialog={this.handleOpenBalanceDialog}
                 />
                 <UserCreate
                     {...this.state}
                     onClick={this.toggleUserCreateDialog}
-                    handleSubmit={this.createUser}
                 />
+                {this.state.userUpdateDialogState ? <UserUpdate
+                    handleClose={this.handleCloseEditUser}
+                    user_id={this.state.userUpdateId}/> : null}
+
+                {this.state.userTransactionsDialogState ?
+                    <TransactionsTable
+                        userTransactions={this.state.userTransactions}
+                        handleClose={this.handleCloseUserTransactions}
+                    /> : null}
+
+                {this.state.userUpdateBalanceState ?
+                    <UpdateBalance
+                        handleClose={this.handleCloseBalanceDialog}
+                        user_id={this.state.userBalanceId}
+                        user_amount={this.state.userBalance}
+                    /> : null}
             </div>
         );
     }

@@ -10,6 +10,8 @@ import {withStyles} from 'material-ui/styles';
 import TextField from 'material-ui/TextField';
 import Snackbar from 'material-ui/Snackbar';
 import Api from "../tools/Api";
+import Switch from 'material-ui/Switch';
+import { FormControlLabel, FormGroup } from 'material-ui/Form';
 
 const styles = {
     appBar: {
@@ -20,7 +22,7 @@ const styles = {
     },
 };
 
-class UserCreate extends React.Component {
+class UserUpdate extends React.Component {
     constructor(props) {
         super(props);
 
@@ -42,12 +44,31 @@ class UserCreate extends React.Component {
                 error: false
             },
             show_snackbar: false,
-            snackbar_text: ''
+            snackbar_text: '',
+            enabled: false
         };
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleSnackbarClose = this.handleSnackbarClose.bind(this);
+        this.handleChecked = this.handleChecked.bind(this);
+        this.getUser = this.getUser.bind(this);
+    }
+
+    getUser(user_id) {
+        Api.getUser(user_id).then(data => {
+            this.setState({
+                user_id: {val: data.user_id},
+                user_name: {val: data.user_name},
+                user_custom: {val: data.user_custom},
+                email: {val: data.email},
+                enabled: data.enabled
+            })
+        });
+    }
+
+    componentDidMount() {
+        this.getUser(this.props.user_id);
     }
 
     handleChange(name) {
@@ -63,15 +84,17 @@ class UserCreate extends React.Component {
             user_id: this.state.user_id.val,
             user_name: this.state.user_name.val,
             user_custom: this.state.user_custom.val,
-            email: this.state.email.val
+            email: this.state.email.val,
+            enabled: this.state.enabled
         };
 
-        Api.createUser(user).then(response => {
+        Api.updateUser(user).then(response => {
             if (response.hasOwnProperty('http_status_code')) {
                 switch (response.http_status_code) {
                     case 200:
                         break;
 
+                    case 404:
                     case 409:
                     case 500:
                         this.setState({
@@ -97,7 +120,7 @@ class UserCreate extends React.Component {
                         break;
                 }
             } else {
-                this.props.onClick(true);
+                this.props.handleClose(true);
             }
         });
     }
@@ -108,26 +131,31 @@ class UserCreate extends React.Component {
         });
     }
 
+    handleChecked(event, checked) {
+        this.setState({
+            enabled: checked
+        })
+    }
+
     render() {
-        const {onClick, classes, userCreateDialogState} = this.props;
+        const {onClick, classes, handleClose} = this.props;
 
         return (
             <div>
-                <Button onClick={onClick}>Create User</Button>
                 <Dialog
                     fullScreen
-                    open={userCreateDialogState}
+                    open={true}
                 >
                     <AppBar className={classes.appBar}>
                         <Toolbar>
-                            <IconButton color="inherit" onClick={onClick} aria-label="Close">
+                            <IconButton color="inherit" onClick={handleClose} aria-label="Close">
                                 <CloseIcon/>
                             </IconButton>
                             <Typography type="title" color="inherit" className={classes.flex}>
-                                Create User
+                                Update User
                             </Typography>
                             <Button color="inherit" onClick={this.handleSubmit}>
-                                save
+                                update
                             </Button>
                         </Toolbar>
                     </AppBar>
@@ -159,6 +187,17 @@ class UserCreate extends React.Component {
                         onChange={this.handleChange('email')}
                         error={this.state.email.error}
                     />
+                    <FormGroup>
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={this.state.enabled}
+                                    onChange={this.handleChecked}
+                                />
+                            }
+                            label={this.state.enabled ? "Enabled" : "Disabled"}
+                        />
+                    </FormGroup>
                 </Dialog>
                 <Snackbar
                     open={this.state.show_snackbar}
@@ -186,4 +225,4 @@ class UserCreate extends React.Component {
     }
 }
 
-export default withStyles(styles)(UserCreate);
+export default withStyles(styles)(UserUpdate);
