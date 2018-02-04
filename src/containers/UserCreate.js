@@ -102,8 +102,6 @@ class UserCreate extends React.Component {
                 this.props.onClick(true);
             }
         });
-
-        //this.props.handleSubmit(user);
     }
 
     handleSnackbarClose() {
