@@ -5,6 +5,9 @@ import UserCreate from './UserCreate';
 import UserUpdate from './UserUpdate';
 import Api from '../tools/Api';
 import UpdateBalance from './UpdateBalance';
+import AppBar from 'material-ui/AppBar';
+import Toolbar from 'material-ui/Toolbar';
+import Paper from 'material-ui/Paper';
 
 export default class App extends React.Component {
     constructor(props) {
@@ -141,34 +144,43 @@ export default class App extends React.Component {
     render() {
         return (
             <div>
-                <UsersTable
-                    {...this.state}
-                    onChangePage={this.onChangePage}
-                    onChangeRowsPerPage={this.onChangeRowsPerPage}
-                    handleOpenEditUser={this.handleOpenEditUser}
-                    handleOpenUserTransactions={this.handleOpenUserTransactions}
-                    handleOpenBalanceDialog={this.handleOpenBalanceDialog}
-                />
-                <UserCreate
-                    {...this.state}
-                    onClick={this.toggleUserCreateDialog}
-                />
-                {this.state.userUpdateDialogState ? <UserUpdate
-                    handleClose={this.handleCloseEditUser}
-                    user_id={this.state.userUpdateId}/> : null}
+                <AppBar
+                    position="fixed"
+                >
+                    <Toolbar>
+                        <UserCreate
+                            {...this.state}
+                            onClick={this.toggleUserCreateDialog}
+                        />
+                    </Toolbar>
+                </AppBar>
+                <div style={{marginTop: '70px'}}/>
+                <Paper>
+                    <UsersTable
+                        {...this.state}
+                        onChangePage={this.onChangePage}
+                        onChangeRowsPerPage={this.onChangeRowsPerPage}
+                        handleOpenEditUser={this.handleOpenEditUser}
+                        handleOpenUserTransactions={this.handleOpenUserTransactions}
+                        handleOpenBalanceDialog={this.handleOpenBalanceDialog}
+                    />
+                    {this.state.userUpdateDialogState ? <UserUpdate
+                        handleClose={this.handleCloseEditUser}
+                        user_id={this.state.userUpdateId}/> : null}
 
-                {this.state.userTransactionsDialogState ?
-                    <TransactionsTable
-                        userTransactions={this.state.userTransactions}
-                        handleClose={this.handleCloseUserTransactions}
-                    /> : null}
+                    {this.state.userTransactionsDialogState ?
+                        <TransactionsTable
+                            userTransactions={this.state.userTransactions}
+                            handleClose={this.handleCloseUserTransactions}
+                        /> : null}
 
-                {this.state.userUpdateBalanceState ?
-                    <UpdateBalance
-                        handleClose={this.handleCloseBalanceDialog}
-                        user_id={this.state.userBalanceId}
-                        user_amount={this.state.userBalance}
-                    /> : null}
+                    {this.state.userUpdateBalanceState ?
+                        <UpdateBalance
+                            handleClose={this.handleCloseBalanceDialog}
+                            user_id={this.state.userBalanceId}
+                            user_amount={this.state.userBalance}
+                        /> : null}
+                </Paper>
             </div>
         );
     }
