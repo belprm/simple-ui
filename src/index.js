@@ -1,3 +1,6 @@
+import "babel-polyfill";
+import 'whatwg-fetch'
+
 import './style/app.scss';
 
 import React from 'react';
