@@ -113,7 +113,7 @@ class UserCreate extends React.Component {
 
         return (
             <div>
-                <Button onClick={onClick} color="inherit">Create User</Button>
+                <Button onClick={onClick} color="inherit" raised>Create User</Button>
                 <Dialog
                     fullScreen
                     open={userCreateDialogState}

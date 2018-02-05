@@ -11,38 +11,11 @@ import Toolbar from 'material-ui/Toolbar';
 import IconButton from 'material-ui/IconButton';
 import CloseIcon from 'material-ui-icons/Close';
 
-const UsersTable = ({userTransactions, handleClose}) => (
-    <Dialog
-        open
-        fullScreen
-    >
-        <AppBar position="static">
-            <Toolbar>
-                <IconButton color="inherit" onClick={handleClose} aria-label="Close">
-                    <CloseIcon/>
-                </IconButton>
-            </Toolbar>
-        </AppBar>
-        <Table>
-            <TableHead>
-                <TableRow>
-                    <TableCell>Operation ID</TableCell>
-                    <TableCell>Transaction ID</TableCell>
-                    <TableCell>Coupon ID</TableCell>
-                    <TableCell>Coupon Code</TableCell>
-                    <TableCell>Transaction Type</TableCell>
-                    <TableCell>Comment</TableCell>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Amount</TableCell>
-                    <TableCell>Sum</TableCell>
-                    <TableCell>Currency</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>User Blance</TableCell>
-                    <TableCell>User ID</TableCell>
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {userTransactions.map(transaction => (
+const UsersTable = ({userTransactions, handleClose}) => {
+    const Body = () => {
+        if (userTransactions.length) {
+            return (
+                userTransactions.map(transaction => (
                     <TableRow key={transaction.operation_id}>
                         <TableCell>{String(transaction.operation_id)}</TableCell>
                         <TableCell>{String(transaction.transaction_id)}</TableCell>
@@ -58,10 +31,51 @@ const UsersTable = ({userTransactions, handleClose}) => (
                         <TableCell>{String(transaction.user_balance)}</TableCell>
                         <TableCell>{String(transaction.user_id)}</TableCell>
                     </TableRow>
-                ))}
-            </TableBody>
-        </Table>
-    </Dialog>
-);
+                ))
+            )
+        } else {
+            return (<div>
+                <p>User has no transactions.</p>
+            </div>);
+        }
+    };
+
+    return (
+        <Dialog
+            open
+            fullScreen
+        >
+            <AppBar position="static">
+                <Toolbar>
+                    <IconButton color="inherit" onClick={handleClose} aria-label="Close">
+                        <CloseIcon/>
+                    </IconButton>
+                </Toolbar>
+            </AppBar>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>Operation ID</TableCell>
+                        <TableCell>Transaction ID</TableCell>
+                        <TableCell>Coupon ID</TableCell>
+                        <TableCell>Coupon Code</TableCell>
+                        <TableCell>Transaction Type</TableCell>
+                        <TableCell>Comment</TableCell>
+                        <TableCell>Date</TableCell>
+                        <TableCell>Amount</TableCell>
+                        <TableCell>Sum</TableCell>
+                        <TableCell>Currency</TableCell>
+                        <TableCell>Status</TableCell>
+                        <TableCell>User Blance</TableCell>
+                        <TableCell>User ID</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    <Body/>
+                </TableBody>
+            </Table>
+        </Dialog>
+    );
+};
 
 export default UsersTable;
